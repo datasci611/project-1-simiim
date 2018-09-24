@@ -112,5 +112,32 @@ For rape arrests, each group has `r round(less.r,2)` and `r round(more.r,4)`, fo
 
 In the future, it would be interesting to see if the number of police officers around the urban area has an affect to the crime rates.
 
+## 3.
+```{r}
+data(chickwts)
+chick <- as_tibble(chickwts)
 
+# graph #
+chick %>%
+  ggplot() +
+    geom_boxplot(mapping = aes(x=reorder(feed,weight,FUN=median), y=weight)) +
+    xlab('Feed supplement') +
+    ylab('Chick weight (g)') +
+    annotate('text', label='152', x=1, y=162, color='red') +
+    annotate('text', label='221', x=2, y=231, color='red') +
+    annotate('text', label='248', x=3, y=258, color='red') +
+    annotate('text', label='263', x=4, y=273, color='red') +
+    annotate('text', label='328', x=5, y=348, color='red') +
+    annotate('text', label='342', x=6, y=352, color='red')
+
+# summary #
+med <- chick %>% 
+  group_by(feed) %>%
+  mutate(med=median(weight)) %>% select(feed,med) %>% unique()
+```
+The above boxplots are derived using the "chickwts" data set in R, which is provided from "Anonymous (1948) Biometrika, 35, 214." This data set stores the weight of chicks after six weeks, in grams. The chicks were randomly allocated into six groups, each receiving different feed supplements which were: casein, horsebean, linseed, meatmeal, soybean, and sunflower.
+
+Each boxplots has the median values of weight written above the median lines. Looking at the median values, we can see that in the order of horsebean, linseed, soybean, meatmeal, sunflower, and casein, the chicks are heavier.
+
+In the future, it would be interesting to see if this trend of chick growth is consistent with different types of chicks.
 
