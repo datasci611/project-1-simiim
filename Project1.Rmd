@@ -1,0 +1,116 @@
+---
+title: "Project 1"
+author: "(Simi Im, 730265758)"
+output: html_document
+---
+
+## 1.
+```{r}
+library(tidyverse)
+
+data(ToothGrowth)
+tooth <- as_tibble(ToothGrowth)
+
+# graph #
+tooth %>%
+  filter(supp=='OJ') %>%
+  ggplot() +
+    geom_boxplot(mapping = aes(x=as.factor(dose), y=len)) +
+    ggtitle('Supplement OJ') +
+    xlab('Does (mg/day)') +
+    ylab('Odontoblast Length')
+
+tooth %>%
+  filter(supp=='VC') %>%
+  ggplot() +
+    geom_boxplot(mapping = aes(x=as.factor(dose), y=len)) +
+    ggtitle('Supplement VC') +
+    xlab('Does (mg/day)') +
+    ylab('Odontoblast Length')
+
+# summary #
+ (conclude <- tooth %>%
+  group_by(supp,dose) %>%
+  mutate(med=median(len), rang=max(len)-min(len)) %>%
+  distinct(med, rang))
+```
+The above figures are derived using the "ToothGrowth" data set in R, which is provided from "C. I. Bliss (1952). The Statistics of Bioassay. Academic Press." This data set stores the length of odontoblasts (cells responsible for tooth growth) in 60 guinea pigs. Each guinea pigs received either 0.5, 1, or 2 mg/day of vitamin C through orange juice or ascorbic acid. For both vitamin C delivery methods, we can see from the boxplots that having higher dose of vitamin C per day resulted in longer odontoblasts. 
+
+For guinea pigs that received vitamin C through orange juice, the length of odontoblasts is `r conclude[4,3]`, `r conclude[5,3]`, and `r conclude[6,3]` units for 0.5, 1.0, 2.0 mg/day of vitamin C, respectively. For guinea pigs that received vitamin C through ascorbic acid, the length of odontoblasts is `r conclude[1,3]`, `r conclude[2,3]`, and `r conclude[3,3]` units for 0.5, 1.0, 2.0 mg/day of vitamin C, respectively. Even though the median length of odontoblasts at 2.0 mg/day dose is the same for two guinea pig group of supplement types, the group receiving orange juice has less spread around the median (length of the boxplot is `r conclude[6,4]`, whereas for the ascorbic acid group the length of the boxplot is `r conclude[3,4]`). Therefore, assuming that we want the longest tooth for guinea pigs, the best result came out when we supplied 2.0 mg/day of vitamin C with orange juice.
+
+In the future, it would be interesting to see if even higher level of vitamin C dosage helps odontoblasts growth, and if this vitamin C supplement promotes odontoblasts growth for different animals.
+
+## 2.
+```{r}
+data(USArrests)
+arrest <- as_tibble(USArrests)
+
+# graph & summary #
+arrest %>%
+  ggplot() +
+    geom_histogram(mapping = aes(x=Murder), binwidth = 2) +
+    geom_vline(xintercept = 10, color='red') +
+    annotate('text', label='less murder', x=4, y=8.4, color='red') +
+    annotate('text', label='more murder', x=15, y=8.4, color='red') +
+    xlab('Murder arrests per 100,000') +
+    ylab('States count')+
+    theme_bw()
+
+m.less <- arrest %>% 
+  filter(Murder <= 10) %>%  mutate(mean.less=mean(Murder)) %>% select(mean.less) %>% unique()
+m.more <- arrest %>% 
+  filter(Murder > 10) %>%  mutate(mean.more=mean(Murder)) %>% select(mean.more) %>% unique()
+
+less.m <- arrest %>% filter(Murder <= 10) %>% mutate(mean.upop=mean(UrbanPop)) %>% select(mean.upop) %>% unique()
+more.m <- arrest %>% filter(Murder > 10) %>% mutate(mean.upop=mean(UrbanPop)) %>% select(mean.upop) %>% unique()
+
+arrest %>%
+  ggplot() +
+    geom_histogram(mapping = aes(x=Assault), binwidth = 30) +
+    geom_vline(xintercept = 200, color='red') +
+    annotate('text', label='less assault', x=75, y=7.5, color='red') +
+    annotate('text', label='more assault', x=270, y=7.5, color='red') +
+    xlab('Assault arrests per 100,000') +
+    ylab('States count')+
+    theme_bw()
+
+a.less <- arrest %>% 
+  filter(Assault <= 200) %>%  mutate(mean.less=mean(Assault)) %>% select(mean.less) %>% unique()
+a.more <- arrest %>% 
+  filter(Assault > 200) %>%  mutate(mean.more=mean(Assault)) %>% select(mean.more) %>% unique()
+
+less.a <- arrest %>% filter(Assault <= 200) %>% mutate(mean.upop=mean(UrbanPop)) %>% select(mean.upop) %>% unique()
+more.a <- arrest %>% filter(Assault > 200) %>% mutate(mean.upop=mean(UrbanPop)) %>% select(mean.upop) %>% unique()
+
+arrest %>%
+  ggplot() +
+    geom_histogram(mapping = aes(x=Rape), binwidth = 3) +
+    geom_vline(xintercept = 30, color='red') +
+    annotate('text', label='less rape', x=8, y=8.4, color='red') +
+    annotate('text', label='more rape', x=40, y=8.4, color='red') +
+    xlab('Rape arrests per 100,000') +
+    ylab('States count')+
+    theme_bw()
+
+r.less <- arrest %>% 
+  filter(Rape <= 30) %>%  mutate(mean.less=mean(Rape)) %>% select(mean.less) %>% unique()
+r.more <- arrest %>% 
+  filter(Rape > 30) %>%  mutate(mean.more=mean(Rape)) %>% select(mean.more) %>% unique()
+
+less.r <- arrest %>% filter(Rape <= 30) %>% mutate(mean.upop=mean(UrbanPop)) %>% select(mean.upop) %>% unique()
+more.r <- arrest %>% filter(Rape > 30) %>% mutate(mean.upop=mean(UrbanPop)) %>% select(mean.upop) %>% unique()
+```
+The above figures are derived using the "USArrests" data set in R, which is provided from "World Almanac and Book of facts 1975." for crime rates and "Statistical Abstracts of the United States 1975, p.20," for urban rates. This data set stores the number of murder, assault, and rapes per 100,000 for each 50 states in the United States, along with the percent of urban population.
+
+The histogram of murder arrests, assault arrests, and rape arrests seems that the states can be devided into two groups. Those with lower crime rates, and those with higher crime rates. The murder and assault histograms show bi-modal shape, and the rape histogram shows a long right tail distribution which I will seperate out from the "less" rape arrest rate. For murder arrests, the "less" group has `r round(m.less,2)` murder arrests per 100,000 and the "more" group has `r round(m.more,2)` murder arrests per 100,000.
+For assault arrests, the "less" group has `r round(a.less,2)` murder arrests per 100,000 and the "more" group has `r round(a.more,2)` murder arrests per 100,000.
+For assault arrests, the "less" group has `r round(r.less,2)` murder arrests per 100,000 and the "more" group has `r round(r.more,2)` murder arrests per 100,000.
+
+The urban population doesn't seem to affect the crime rates, since the "less" and "more" crime rate groups have similar percentage of urban population. For murder arrrests, the "less" group has `r round(less.m,2)` and the "more" group has `r round(more.m,2)` of urban population percentage.
+For assault arrests, each group has `r round(less.a,2)` and `r round(more.a,2)`, for "less" and "more" groups, respectively. 
+For rape arrests, each group has `r round(less.r,2)` and `r round(more.r,4)`, for "less" and "more" groups, respectively.
+
+In the future, it would be interesting to see if the number of police officers around the urban area has an affect to the crime rates.
+
+
+
